@@ -4,30 +4,32 @@ var path=require('path');
 var bodyparser=require('body-parser');
 
 app.use(bodyparser.urlencoded({extended:true}));
-
-app.get('/', function (req, res) {
-  var stamp={unix:null, natural:null};
-  res.end(JSON.stringify(stamp));
-})
-
+app.use(express.static(path.join(__dirname, 'public')));
 app.get('/:time',function(req, res){
-    var tmp = req.params.time;
-    var ms=decodeURI(tmp);
+    var timeQuery = req.params.time;
     var unixTime={unix:'', natural:''};
-    var date;
-    if(isNaN(parseInt(ms))){
-        date = new Date(ms);
+    var date = new Date(timeQuery);
+    
+    //console.log(date.getTime());
+    
+    if(!isNaN(parseInt(timeQuery))){
+        date = new Date(parseInt(timeQuery)*1000);
         unixTime.unix=(Math.round(date.getTime()/1000.0));
-        unixTime.natural=ms;
-        console.log(ms+ " normal date");
-    }else{
-        console.log(ms+ " number");
-        date = new Date(parseInt(ms)*1000);
-        unixTime.unix=ms;
         unixTime.natural=naturalDate(date);
+      
+    }else{
+      
+        date = new Date(timeQuery);
+        
+        if(!isNaN(date.getDate())){
+            unixTime.unix=date.getTime()/1000;
+            unixTime.natural=naturalDate(date);    
+        }else{
+            unixTime.unix=null;
+            unixTime.natural=null;
+        }
         
     }
-    
    res.send(unixTime);
 })
 
@@ -38,5 +40,6 @@ app.listen(8080, function () {
 function naturalDate(d){
     var months = ["January","February","March","April","May","June","July","August","September","October"
     ,"November","December"];
+    
     return months[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();
 }

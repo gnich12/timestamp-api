@@ -2,16 +2,16 @@ var express = require('express')
 var app = express()
 var path=require('path');
 var bodyparser=require('body-parser');
-
+var port = process.env.PORT || 8000 || 8080;
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/:time',function(req, res){
     var timeQuery = req.params.time;
     var unixTime={unix:'', natural:''};
     var date = new Date(timeQuery);
     
-    //console.log(date.getTime());
-    
+
     if(!isNaN(parseInt(timeQuery))){
         date = new Date(parseInt(timeQuery)*1000);
         unixTime.unix=(Math.round(date.getTime()/1000.0));
@@ -20,7 +20,6 @@ app.get('/:time',function(req, res){
     }else{
       
         date = new Date(timeQuery);
-        
         if(!isNaN(date.getDate())){
             unixTime.unix=date.getTime()/1000;
             unixTime.natural=naturalDate(date);    

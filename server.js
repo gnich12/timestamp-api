@@ -2,9 +2,11 @@ var express = require('express')
 var app = express()
 var path=require('path');
 var bodyparser=require('body-parser');
-var port = process.env.PORT || 3000 || 8080;
+var port = process.env.PORT || 3000 ||8080;
+var routes=require('./routes/index');
+
 app.use(bodyparser.urlencoded({extended:true}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, './public')));
 
 app.get('/:time',function(req, res){
     var timeQuery = req.params.time;
@@ -32,7 +34,7 @@ app.get('/:time',function(req, res){
    res.send(unixTime);
 })
 
-app.listen(8080, function () {
+app.listen(port, function () {
   console.log('Example app listening on port 8080!')
 })
 
